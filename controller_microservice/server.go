@@ -4,10 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	psh "github.com/platformsh/gohelper"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
+	psh "github.com/platformsh/gohelper"
 	"gopkg.in/oleiade/reflections.v1"
 	"io"
 	"io/ioutil"
@@ -21,10 +21,10 @@ import (
 )
 
 type Microservice struct {
-	Name string
+	Name  string
 	Route string
-	Type string
-	Flags map[string]bool // flags such as "composable" to pass to renderer
+	Type  string
+	Flags map[string]bool   // flags such as "composable" to pass to renderer
 	Attrs map[string]string // attributes to get from node and pass to service if possible
 }
 
@@ -76,56 +76,56 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(microservices)
 
 	// this functions overrides default rendering in certain cases
-	renderHook := func (w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-	
-	renderStatus := false
-	content := getContent(node)		
+	renderHook := func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+
+		renderStatus := false
+		content := getContent(node)
 		// skip all nodes that are not of types we already consider
 		for _, microservice := range microservices {
 			if match, parent := parentMatch(node, microservice.Type); match {
-					params := map[string]string{}
+				params := map[string]string{}
 
-					for k, v := range microservice.Attrs {
-						fmt.Println(k)
-						fmt.Println(v)
-						value, e := reflections.GetField(parent, v)
-						checkErr(e)
-						fmt.Println(value)
-						// whether it is a string, a byte array, or a number, make it a string
-						var s string
-						rt := reflect.TypeOf(value)
-						switch rt.Kind(){
-						case reflect.Array:
-							s = fmt.Sprintf("%s", value)
-						case reflect.Slice:
-							s = fmt.Sprintf("%s", value)
-						case reflect.String:
-							s = fmt.Sprintf("%s", value)
-						default:
-							s = fmt.Sprintf("%v", value)
-						}
-						params[k] = s
-						fmt.Println("We added a parameter")
-						fmt.Println(s)
+				for k, v := range microservice.Attrs {
+					fmt.Println(k)
+					fmt.Println(v)
+					value, e := reflections.GetField(parent, v)
+					checkErr(e)
+					fmt.Println(value)
+					// whether it is a string, a byte array, or a number, make it a string
+					var s string
+					rt := reflect.TypeOf(value)
+					switch rt.Kind() {
+					case reflect.Array:
+						s = fmt.Sprintf("%s", value)
+					case reflect.Slice:
+						s = fmt.Sprintf("%s", value)
+					case reflect.String:
+						s = fmt.Sprintf("%s", value)
+					default:
+						s = fmt.Sprintf("%v", value)
 					}
+					params[k] = s
+					fmt.Println("We added a parameter")
+					fmt.Println(s)
+				}
 
-					fmt.Println(params)
+				fmt.Println(params)
 
-					response := postToMicroservice(microservice.Route, content, params)
-					s, err := ioutil.ReadAll(response.Body)
-					checkErr(err)
+				response := postToMicroservice(microservice.Route, content, params)
+				s, err := ioutil.ReadAll(response.Body)
+				checkErr(err)
 
-					renderStatus = true
-					content = string(s)
-					if composable, ok := microservice.Flags["composable"]; ok {
-						if composable != true {
-							io.WriteString(w, content)
-							return ast.GoToNext, renderStatus
-						}
-					} else{
+				renderStatus = true
+				content = string(s)
+				if composable, ok := microservice.Flags["composable"]; ok {
+					if composable != true {
 						io.WriteString(w, content)
-						return ast.GoToNext, renderStatus						
+						return ast.GoToNext, renderStatus
 					}
+				} else {
+					io.WriteString(w, content)
+					return ast.GoToNext, renderStatus
+				}
 			}
 		}
 		if renderStatus { // we need to render something, because we ended on a "composable" microservice
@@ -142,11 +142,11 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 	if r.PostForm != nil {
 		text := r.PostForm.Get("text")
 		opts := html.RendererOptions{
-			Flags: html.CommonFlags,
+			Flags:          html.CommonFlags,
 			RenderNodeHook: renderHook,
 		}
 		renderer := html.NewRenderer(opts)
-		
+
 		md := []byte(text)
 		html := markdown.ToHTML(md, nil, renderer)
 		fmt.Fprintln(w, string(html[:]))
@@ -165,17 +165,17 @@ func parentMatchRecur(node ast.Node, typeName string) (bool, ast.Node) {
 }
 
 func parentMatch(node ast.Node, typeName string) (bool, ast.Node) {
-	if ok, parent := parentMatchRecur(node, typeName); ok && (node.GetChildren() ==  nil) {
+	if ok, parent := parentMatchRecur(node, typeName); ok && (node.GetChildren() == nil) {
 		return ok, parent
 	} else {
 		return false, nil
 	}
 }
 
-func postToMicroservice(serviceUrl string, text string, params map[string]string) (*http.Response) {
+func postToMicroservice(serviceUrl string, text string, params map[string]string) *http.Response {
 	data := url.Values{}
 	data.Set("text", text)
-	for k,v := range params {
+	for k, v := range params {
 		data.Set(k, v)
 	}
 	response, err := http.PostForm(serviceUrl, data)
@@ -185,7 +185,7 @@ func postToMicroservice(serviceUrl string, text string, params map[string]string
 	return response
 }
 
-func getRoutes() (map[string]interface{}, error){
+func getRoutes() (map[string]interface{}, error) {
 	// Connection to microservices is managed via PLATFORM_ROUTES
 
 	rawRoutes := os.Getenv("PLATFORM_ROUTES")
@@ -201,7 +201,7 @@ func getRoutes() (map[string]interface{}, error){
 	return decodedRoutes, nil
 }
 
-func getMicroservice(serviceUrl string) (Microservice) {
+func getMicroservice(serviceUrl string) Microservice {
 	baseUrl, err := url.Parse(serviceUrl)
 	checkErr(err)
 	route, err := url.Parse("/discover")
@@ -224,8 +224,8 @@ func getMicroservice(serviceUrl string) (Microservice) {
 	return microservice
 }
 
-func discoverServices() ([]Microservice, error){
-	routes, err := getRoutes() 
+func discoverServices() ([]Microservice, error) {
+	routes, err := getRoutes()
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +234,7 @@ func discoverServices() ([]Microservice, error){
 	fmt.Println("Entering the loop")
 	for r, _ := range routes {
 		fmt.Println(r)
-		if !strings.HasPrefix(r, "https://controller") && strings.HasPrefix(r, "https://"){
+		if !strings.HasPrefix(r, "https://controller") && strings.HasPrefix(r, "https://") {
 			microservices = append(microservices, getMicroservice(r))
 			fmt.Println("Found one.")
 			fmt.Println(microservices)
