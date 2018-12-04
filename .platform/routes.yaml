@@ -1,0 +1,12 @@
+"https://controller.{default}/":
+  type: upstream
+  upstream: "controller_microservice:http"
+
+"https://pygments.{default}/":
+  type: upstream
+  upstream: "pygments_microservice:http"
+
+"https://svg.{default}/":
+  type: upstream
+  upstream: "svg_microservice:http"
+
