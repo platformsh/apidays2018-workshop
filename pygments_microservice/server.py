@@ -14,10 +14,10 @@ import pygments
 import pygments.formatters
 import pygments.lexers
 
-
 app = flask.Flask(__name__)
 
 relationships = json.loads(base64.b64decode(os.environ["PLATFORM_RELATIONSHIPS"]).decode())
+
 
 @app.route('/', methods=["POST"])
 def root():
@@ -27,9 +27,9 @@ def root():
     app.logger.warning(text)
 
     if language:
-    	lexer = pygments.lexers.get_lexer_by_name(language)
+        lexer = pygments.lexers.get_lexer_by_name(language)
     else:
-    	lexer = pygments.lexers.guess_lexer(text)
+        lexer = pygments.lexers.guess_lexer(text)
 
     app.logger.warning(lexer)
 
@@ -37,17 +37,13 @@ def root():
 
     return output
 
+
 @app.route('/discover', methods=["GET"])
 def discover():
-	data = {
-		"name": "pygments",
-		"type": "*ast.CodeBlock",
-		"attrs": {"language": "Info"}
-	}
-	return flask.jsonify(data)
+    data = {"name": "pygments", "type": "*ast.CodeBlock", "attrs": {"language": "Info"}}
+    return flask.jsonify(data)
 
 
 if __name__ == "__main__":
-    http_server = gevent.pywsgi.WSGIServer(
-        ('127.0.0.1', int(os.environ["PORT"])), app)
+    http_server = gevent.pywsgi.WSGIServer(('127.0.0.1', int(os.environ["PORT"])), app)
     http_server.serve_forever()
