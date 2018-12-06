@@ -213,6 +213,7 @@ func getMicroservice(serviceUrl string) Microservice {
 	checkErr(err)
 
 	var microservice Microservice
+	fmt.Println(data)
 	err = json.Unmarshal(data, &microservice)
 	checkErr(err)
 
