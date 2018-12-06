@@ -4,8 +4,6 @@ name = "pypi"
 verify_ssl = true
 
 [packages]
-redis = "*"
-pymysql = "*"
 flask = "*"
 gevent = "*"
 Pygments = "*"

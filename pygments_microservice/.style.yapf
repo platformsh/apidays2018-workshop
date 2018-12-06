@@ -1,0 +1,23 @@
+[style]
+
+based_on_style = pep8
+
+align_closing_bracket_with_visual_indent = false
+allow_multiline_lambdas = false
+blank_line_before_nested_class_or_def = true
+coalesce_brackets = false
+column_limit = 99
+continuation_indent_width = 4
+dedent_closing_brackets = true
+indent_dictionary_value = false
+indent_width = 4
+join_multiple_lines = false
+space_between_ending_comma_and_closing_bracket = false
+spaces_around_power_operator = false
+spaces_before_comment = 2
+split_arguments_when_comma_terminated = true
+split_before_bitwise_operator = true
+split_before_first_argument = true
+split_before_logical_operator = true
+split_before_named_assigns = true
+use_tabs = false

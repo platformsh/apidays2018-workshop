@@ -1,5 +1,5 @@
 name: svg_microservice
-type: nodejs:10-rc
+type: nodejs:10
 
 dependencies:
   nodejs:

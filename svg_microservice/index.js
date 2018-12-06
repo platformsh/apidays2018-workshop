@@ -52,7 +52,7 @@ var server = http.createServer(function (request, response) {
             data = {
                 "name": "svg",
                 "type": "*ast.Heading",
-                "flags": {"composable": true},
+                "flags": {"composable": false},
                 "attrs": {"heading_level": "Level"}
             }
             response.end(JSON.stringify(data))

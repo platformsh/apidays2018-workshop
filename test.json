@@ -1,0 +1,6 @@
+{
+	"text": "# HELLO\r\n\r\n```php\r\n<!DOCTYPE html>\r\n<html>\r\n<body>\r\n\r\n<?php\r\n$txt = \"Hello world!\";\r\n$x = 5;\r\n$y = 10.5;\r\n\r\necho $txt;\r\necho \"<br>\";\r\necho $x;\r\necho \"<br>\";\r\necho $y;\r\n?>\r\n\r\n<\/body>\r\n<\/html>\r\n```",
+	"options": {
+		"foo": true
+	}
+}
