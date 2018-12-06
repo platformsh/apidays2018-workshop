@@ -17,19 +17,23 @@ end
 module Text
   class API < Grape::API
     version 'v1', using: :header, vendor: 'platform_sh'
+    content_type :txt, 'text/plain'
+    content_type :json, 'application/json'
     
     format :json
     params do
        optional :text, type: String
      end
-     
+
     desc "Returns redacted text"
     get "" do
+      content_type 'text/plain'
       redact(params[:text])
     end
     
     desc 'Returns redacted text'
     post "" do
+      content_type 'text/plain'
       redact(params[:text])
     end
 
