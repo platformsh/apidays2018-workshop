@@ -10,7 +10,7 @@ def redact(text)
   else
     redacted=""
   end
-  { redacted: redacted} 
+  redacted
 
 end
 
