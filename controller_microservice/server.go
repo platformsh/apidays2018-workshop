@@ -104,6 +104,7 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 					default:
 						s = fmt.Sprintf("%v", value)
 					}
+					s = stripQuotes(s) // some microservices might return quotes-as-bytes around text
 					params[k] = s
 					fmt.Println("We added a parameter")
 					fmt.Println(s)
@@ -269,4 +270,15 @@ func getContent(node ast.Node) string {
 	}
 	leaf := node.AsLeaf()
 	return contentToString(leaf.Literal, leaf.Content)
+}
+
+func stripQuotes(s string) string {
+	r := s
+	if len(r) > 0 && r[0] == '"' {
+		r = r[1:]
+	}
+	if len(r) > 0 && r[len(r)-1] == '"' {
+		r = r[:len(r)-1]
+	}
+	return r
 }
