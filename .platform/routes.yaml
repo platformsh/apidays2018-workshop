@@ -10,3 +10,7 @@
   type: upstream
   upstream: "svg_microservice:http"
 
+"https://redacted.{default}/":
+  type: upstream
+  upstream: "redacted_microservice:http"
+

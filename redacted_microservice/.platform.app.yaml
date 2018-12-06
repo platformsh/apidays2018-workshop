@@ -1,0 +1,14 @@
+name: redacted_microservice
+type: "ruby:2.4"
+
+web:
+    upstream:
+     # Send requests to the app server through a unix socket, whose location
+     # will be defined in an environment variable named SOCKET.
+       socket_family: "unix"
+    commands:
+       start: "unicorn -l $SOCKET -E production config.ru"
+disk: 256
+
+hooks:
+  build: bundle install

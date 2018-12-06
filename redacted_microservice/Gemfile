@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+
+gem "confidential_info_redactor"
+gem 'grape'
+gem 'cld'
+gem 'unicorn'
+gem 'platform_sh'
