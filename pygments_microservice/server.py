@@ -7,8 +7,6 @@ import sys
 
 import flask
 import gevent.pywsgi
-import pymysql
-import redis
 
 import pygments
 import pygments.formatters

@@ -201,7 +201,7 @@ func getRoutes() (map[string]interface{}, error) {
 	return decodedRoutes, nil
 }
 
-func getMicroservice(serviceUrl string) Microservice {
+func getMicroservice(serviceUrl string) (Microservice, error) {
 	baseUrl, err := url.Parse(serviceUrl)
 	checkErr(err)
 	route, err := url.Parse("/discover")
@@ -215,14 +215,16 @@ func getMicroservice(serviceUrl string) Microservice {
 	var microservice Microservice
 	fmt.Println(data)
 	err = json.Unmarshal(data, &microservice)
-	checkErr(err)
+	if err != nil {
+		return microservice, err
+	}
 
 	fmt.Println(microservice)
 
 	microservice.Route = serviceUrl
 
 	fmt.Println("microservice object was created successfully")
-	return microservice
+	return microservice, nil
 }
 
 func discoverServices() ([]Microservice, error) {
@@ -233,11 +235,15 @@ func discoverServices() ([]Microservice, error) {
 
 	var microservices []Microservice
 	fmt.Println("Entering the loop")
-	for r, _ := range routes {
-		fmt.Println(r)
-		if !strings.HasPrefix(r, "https://controller") && strings.HasPrefix(r, "https://") {
-			microservices = append(microservices, getMicroservice(r))
-			fmt.Println("Found one.")
+	for route, _ := range routes {
+		if !strings.HasPrefix(route, "https://controller") && strings.HasPrefix(route, "https://") {
+			microservice, err := getMicroservice(route)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			microservices = append(microservices, microservice)
+			fmt.Println("Found microservice on cluster: ")
 			fmt.Println(microservices)
 		}
 	}
