@@ -41,9 +41,10 @@ var server = http.createServer(function (request, response) {
 
         request.on("end", function(){
             parsed = parse(body)
-            text = parsed.text
-            if ((text == undefined )|| (text.length()==0)){
-                text ="Placeholder"
+            if ("text" in parsed) {
+                text = parsed.text
+            } else {
+                text =""
             }
             if ("heading_level" in parsed) {
                 options.fontSize = heading_font_size[parsed.heading_level]
