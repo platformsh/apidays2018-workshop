@@ -13,10 +13,24 @@
         <h1 style="font-family: 'PT Mono', monospace;padding:8px"> Microservice Markdown Magic</h1>
         <div style="width:100%">
         <div style="width:48%;padding:8px;float:left;clear:none; ">
-            <textarea style="" id="editor" onChange="submit_html();"></textarea>
+            <textarea style="height:100%" id="editor" onChange="submit_html();">
+# h1 Heading i -
+## h2 Heading ii -
+### h3 Heading iii -
+
+``` js
+var foo = function (bar) {
+  return bar++;
+};
+
+console.log(foo(5));
+```
+# Automated Redaction -
+
+My name is Ludovico Altana and I approve this message</textarea>
         </div>
-        <div style="width:48%;padding:8px;float:right;vertical-align:top;height:5OOpx">
-            <iframe  style="border:none;width:100%;height:4OOpx; background-color:white; min-height:300px" id="result"></iframe>
+        <div style="width:48%;padding:8px;float:right;vertical-align:top;height:6OOpx">
+            <iframe  style="border:none;width:100%;height:6OOpx; background-color:white; min-height:600px" id="result"></iframe>
         </div>
         </div>
     </body>
