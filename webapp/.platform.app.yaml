@@ -1,0 +1,10 @@
+name: app
+
+type: golang:1.11
+    commands:
+        start: sleep infinity
+    locations:
+        /:
+            root: "public"
+
+disk: 1024
