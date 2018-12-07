@@ -59,8 +59,14 @@ func checkErr(err error) {
 	}
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func handleFunc(w http.ResponseWriter, r *http.Request) {
 	var microservices []Microservice
+
+	enableCors(&w)
 
 	microservices, err := discoverServices()
 	checkErr(err)
