@@ -19,7 +19,7 @@ const textToSVG = TextToSVG.loadSync('./fonts/Bangers-Regular.otf');
 
 
 // configure SVG options
-var attributes = {fill: '#371122', stroke: '#020200'};
+var attributes = {fill: 'midnightblue', stroke: 'darkslateblue'};
 var options = {x: 0, y: 0, fontSize: 72, anchor: 'top', attributes: attributes};
 
 const heading_font_size = {
