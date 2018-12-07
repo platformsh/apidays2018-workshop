@@ -34,7 +34,7 @@
                     text: code
                 })
                 .done(function(result) {
-                    document.getElementById('result').contentWindow.document.write(result);
+                    document.getElementById('result').contentWindow.document.body.innerHTML=result;
                 });
         })
     </script>
