@@ -1,6 +1,7 @@
 name: app
 
 type: golang:1.11
+web:
     commands:
         start: sleep infinity
     locations:
