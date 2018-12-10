@@ -149,3 +149,84 @@ Processing activity: User pushed to Master
 ```
 
 As you can see in your terminal output, each application in your repository has been built and deployed to its own container within your project cluster, a sub-domain has been created for each container, and a free TLS certificate has been provisioned for each domain.
+
+To access the application, visit the primary domain that has been provisioned for your project. This will be the provisioned domain that lacks a sub-domain and fits the pattern `https://master-7rqtwti-YOURPROJECT.us-2.platformsh.site/`. In a production environment, you would instead visit your app's registered domain name.
+
+Play around with the "Microservice Markdown Magic" web application to get a feel for the project.
+
+## Project layout
+
+To better understand how this project functions, explore the repository in your local environment. This project is organized with a separate directory for each microservice:
+
+- [`webapp`](webapp/)
+
+  The app that serves the frontend for the "Microservice Markdown Magic" web app.
+
+- [`controller_microservice`](controller_microservice/)
+
+  The Golang-based backend application that accepts input from the `webapp` and sends it to the other microservices for further processing.
+
+- [`pygments_microservice`](pygments_microservice/)
+
+  A Python-based microservice which accepts a Markdown-formatted code block and returns parsed HTML with code highlighting.
+
+  As you can see in the application, specifying `js` after the opening code fence results in HTML output with Javascript code highlighting.
+
+- [`redacted_microservice`](redacted_microservice/)
+
+  A Ruby-based microservice with accepts text and replaces "senstive" text with a series of black squares. The sensitive text is detected by using the `confidential_info_redactor` Gem.
+
+- [`svg_microservice`](svg_microservice/)
+
+  A Node-based microservice which accepts Markdown-formatted text and returns an SVG for each heading detected in the input.
+
+As you can see, each directory contains a `.platform.app.yaml` that configures how the microservice is built and deployed. The presence of a [`.platform.app.yaml` file](https://docs.platform.sh/configuration/app-containers.html) in a directory tells your project that the directory contains an application, and configures things such as the app's name, its dependencies, and any commands that should be used to build and deploy the app.
+
+Within the [`.platform/`](.platform/) directory, there are two files which configure the project at a higher level:
+
+- The `.platform/services.yaml` file is where you would configure any [additional services that Platform.sh supports](https://docs.platform.sh/configuration/services.html), such as databases, search engines, and message queues.
+- The `.platform/routes.yaml` file is [where domains are mapped](https://docs.platform.sh/configuration/routes.html) to individual services. The information in this file is used by `controller_microservice` to discover other apps in the project.
+
+## Exploring the current project
+
+### Access your project via SSH
+
+To access your project via SSH, hover over "Access site" near the top of the interface on your project dashboard, and copy the SSH command for the `controller_microservice` app, for example:
+
+  ``` bash
+  ssh PROJECTID-master-7rqtwti--controller_microservice@ssh.us-2.platform.sh
+  ```
+
+Alternatively, you can install the [Platform.sh CLI](https://docs.platform.sh/gettingstarted/cli.html) and access the `controller_microservice` app with the command:
+
+  ``` bash
+  platform ssh --environment master --app controller_microservice
+  ```
+
+ The CLI allows you to quickly access different apps deployed in different development environments within a project without having to know the exact URL every time.
+
+### Explore routes
+
+After you've accessed the `controller_microservice` via SSH, you can explore the route relationships that it is using to communicate with other microservices. The base64-encoding `$PLATFORM_ROUTES` environment variable contains information about all the apps running in your project. Print it out (using the `json.tool` Python module to pretty-print the result):
+
+  ``` bash
+  echo $PLATFORM_ROUTES | base64 -d | python -m json.tool
+  ```
+
+### View logging
+
+Access one of the microservice apps via SSH to view logging as it processes input. For example,
+
+``` bash
+platform ssh --environment master --app pygments_microservice
+tail -f /var/log/app.log
+```
+
+or
+
+``` bash
+ssh PROJECTID-master-7rqtwti--pygments_microservice@ssh.us-2.platform.sh
+tail -f /var/log/app.log
+```
+
+When you make a change to the code block in the running web app, you will see the `pygments_microservice` add to its `app.log`.
