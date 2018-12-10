@@ -1,5 +1,25 @@
 # Microservice Markdown Magic
 
+### Table of Contents
+- [Introduction](#introduction)
+    - [Inter-service communication](#inter-service-communication)
+- [Creating and configuring a Platform.sh project](#creating-and-configuring-a-platformsh-project)
+    - [Create a development project on Platform.sh](#create-a-development-project-on-platformsh)
+    - [Set up your development environment](#set-up-your-development-environment)
+    - [Project deployment](#project-deployment)
+- [Project layout](#project-layout)
+- [Exploring the current project](#exploring-the-current-project)
+    - [Access your project via SSH](#access-your-project-via-ssh)
+    - [Explore routes](#explore-routes)
+    - [View logging](#view-logging)
+- [Add your own microservice app!](#add-your-own-microservice-app)
+    - [Creating a basic service](#creating-a-basic-service)
+    - [Debugging your new service](#debugging-your-new-service)
+    - [Integrating your app](#integrating-your-app)
+    - [Going further](#going-further)
+
+## Introduction
+
 This is a playground project to showcase some features of Platform.sh and demonstrate a microservices pattern.
 
 The core of component of this project is `controller_microservice`, an app written in Golang to parse Markdown input and render it into HTML. It leverages https://github.com/gomarkdown/markdown, using it for its core functionality, plus some overrides.
