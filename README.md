@@ -50,11 +50,17 @@ Now that you understand what we are building, you can follow the steps below to 
 ### Create a development project on Platform.sh
 
 1. [Create a free trial development account](https://accounts.platform.sh/platform/trial/general/setup) on Platform.sh. This development account will give you a project with all the features of a paid account, with the only limit being an inability to add a domain name to the project.
+
 2. Check your email to validate your free trial. The validation link will bring you to your user dashboard.
+
 3. Click on "Add a Platform" to create a new project.
+
  ![Click on Add a Platform](docs/images/add_platform.png)
+
 4. Select a "Development" plan, and click "Continue" at the bottom of the page.
+
 5. Finally, choose a region and data center, then click "Create Free Project".
+
 6. A new project will now be created for you to experiment with.
 
 ### Set up your development environment
@@ -62,18 +68,26 @@ Now that you understand what we are building, you can follow the steps below to 
 Now that your development project has been created, you need to add your code.
 
 1. **Give your new project a name**, press "Next", and at the next prompt, select "Import your existing code".
+
  ![Import your existing code](docs/images/existing_code.png)
+
 2. At the next prompt, **add your public SSH key** to be able to upload your code. See our documentation on [Using SSH Keys](https://docs.platform.sh/development/ssh.html) if you need help with this.
+
 3. Before we can move on to the next step, you need to **clone this repository** to your local machine with `git clone https://github.com/platformsh/apidays2018-workshop.git` and **change into the resulting directory** at `apidays2018-workshop`.
+
 4. Back on the Platform.sh setup wizard, you will see two commands that you need to run to push this existing repository to the server. **Copy and execute these two commands.**
+
  ![Push existing project](docs/images/push_project.png)
+
  The first command adds your new project as a remote repository to git, and the second pushes the local Master branch to the server.
 
 In the setup wizard, you will now see that you code is being imported.
 
  ![Repo is ready](docs/images/repo_ready.png)
 
-In your terminal, you will see that after the code is pushed to the server, your new project is being built and deployed on Platform.sh, for example:
+### Project deployment
+
+In your terminal, you will see that after the code is pushed to the server, your new project is automatically being built and deployed on Platform.sh, for example:
 
 ```bash session
 Validating submodules
