@@ -55,7 +55,7 @@ Now that you understand what we are building, you can follow the steps below to 
 
 3. Click on "Add a Platform" to create a new project.
 
- ![Click on Add a Platform](docs/images/add_platform.png)
+   ![Click on Add a Platform](docs/images/add_platform.png)
 
 4. Select a "Development" plan, and click "Continue" at the bottom of the page.
 
@@ -69,7 +69,7 @@ Now that your development project has been created, you need to add your code.
 
 1. **Give your new project a name**, press "Next", and at the next prompt, select "Import your existing code".
 
- ![Import your existing code](docs/images/existing_code.png)
+   ![Import your existing code](docs/images/existing_code.png)
 
 2. At the next prompt, **add your public SSH key** to be able to upload your code. See our documentation on [Using SSH Keys](https://docs.platform.sh/development/ssh.html) if you need help with this.
 
@@ -77,13 +77,13 @@ Now that your development project has been created, you need to add your code.
 
 4. Back on the Platform.sh setup wizard, you will see two commands that you need to run to push this existing repository to the server. **Copy and execute these two commands.**
 
- ![Push existing project](docs/images/push_project.png)
+   ![Push existing project](docs/images/push_project.png)
 
- The first command adds your new project as a remote repository to git, and the second pushes the local Master branch to the server.
+   The first command adds your new project as a remote repository to git, and the second pushes the local Master branch to the server.
 
 In the setup wizard, you will now see that you code is being imported.
 
- ![Repo is ready](docs/images/repo_ready.png)
+   ![Repo is ready](docs/images/repo_ready.png)
 
 ### Project deployment
 
