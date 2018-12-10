@@ -52,13 +52,12 @@ var server = http.createServer(function (request, response) {
             svg = textToSVG.getSVG(text, options)
 
             response.writeHead(200, { "Content-Type": "text/html" });
-            console.log(body);
-            console.log(svg);
+            console.log("Received text to render as SVG: " + body);
             response.end(svg);
         });
 	}
 	else {
-        console.log(request.url)
+        console.log("Received a discover request")
         if (request.url == '/discover') {
             response.writeHead(200, {"Content-Type": "application/json"})
             data = {
