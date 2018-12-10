@@ -11,6 +11,7 @@ import gevent.pywsgi
 import pygments
 import pygments.formatters
 import pygments.lexers
+import pygments.util
 
 app = flask.Flask(__name__)
 
@@ -24,9 +25,9 @@ def root():
     app.logger.warning(language)
     app.logger.warning(text)
 
-    if language:
+    try:
         lexer = pygments.lexers.get_lexer_by_name(language)
-    else:
+    except pygments.util.ClassNotFound:
         lexer = pygments.lexers.guess_lexer(text)
 
     app.logger.warning(lexer)

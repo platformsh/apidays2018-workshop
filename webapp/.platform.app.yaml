@@ -1,0 +1,16 @@
+name: app
+
+type: golang:1.11
+web:
+    commands:
+        start: sleep infinity
+    locations:
+        /:
+            root: "public"
+            index:
+                - "index.html"
+            passthru: false
+            headers:
+              X-Frame-Options: SAMEORIGIN
+              Access-Control-Allow-Origin: "*"
+disk: 1024
