@@ -55,6 +55,7 @@ func main() {
 // It likely should not be used in a real application.
 func checkErr(err error) {
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 }
@@ -92,11 +93,8 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 				params := map[string]string{}
 
 				for k, v := range microservice.Attrs {
-					fmt.Println(k)
-					fmt.Println(v)
 					value, e := reflections.GetField(parent, v)
 					checkErr(e)
-					fmt.Println(value)
 					// whether it is a string, a byte array, or a number, make it a string
 					var s string
 					rt := reflect.TypeOf(value)
@@ -111,11 +109,8 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 						s = fmt.Sprintf("%v", value)
 					}
 					params[k] = s
-					fmt.Println("We added a parameter")
-					fmt.Println(s)
 				}
 
-				fmt.Println(params)
 
 				response := postToMicroservice(microservice.Route, content, params)
 				s, err := ioutil.ReadAll(response.Body)
@@ -135,7 +130,6 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if renderStatus { // we need to render something, because we ended on a "composable" microservice
-			fmt.Println("Why am I here ?")
 			io.WriteString(w, content)
 		}
 		// this means we render the node as normal
@@ -153,6 +147,7 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 		renderer := html.NewRenderer(opts)
 
+		fmt.Println("Received request, rendering...")
 		md := []byte(text)
 		html := markdown.ToHTML(md, nil, renderer)
 		fmt.Fprintln(w, string(html[:]))
@@ -194,6 +189,7 @@ func postToMicroservice(serviceUrl string, text string, params map[string]string
 func getRoutes() (map[string]interface{}, error) {
 	// Connection to microservices is managed via PLATFORM_ROUTES
 
+	fmt.Println("Looking for services in PLATFORM_ROUTES")
 	rawRoutes := os.Getenv("PLATFORM_ROUTES")
 	jsonRoutes, _ := base64.StdEncoding.DecodeString(rawRoutes)
 
@@ -240,7 +236,7 @@ func discoverServices() ([]Microservice, error) {
 	}
 
 	var microservices []Microservice
-	fmt.Println("Entering the loop")
+	fmt.Println("Discovering microservices")
 	for route, _ := range routes {
 		if !strings.HasPrefix(route, "https://controller") && strings.HasPrefix(route, "https://") {
 			microservice, err := getMicroservice(route)
@@ -250,7 +246,7 @@ func discoverServices() ([]Microservice, error) {
 			}
 			microservices = append(microservices, microservice)
 			fmt.Println("Found microservice on cluster: ")
-			fmt.Println(microservices)
+			fmt.Println(microservice)
 		}
 	}
 
