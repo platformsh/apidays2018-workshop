@@ -10,14 +10,14 @@ Communication with other microservices is enabled by the `PLATFORM_ROUTES` varia
 
 ```json
 {
-	"name": "pygments",
-	"type": "*ast.CodeBlock",
-	"attrs": {
-		"language": "Info"
-	},
-	"flags": {
-		"composable": false
-	},
+  "name": "pygments",
+  "type": "*ast.CodeBlock",
+  "attrs": {
+    "language": "Info"
+  },
+  "flags": {
+    "composable": false
+  },
 }
 ```
 
@@ -197,13 +197,15 @@ To access your project via SSH, hover over "Access site" near the top of the int
   ssh PROJECTID-master-7rqtwti--controller_microservice@ssh.us-2.platform.sh
   ```
 
-Alternatively, you can install the [Platform.sh CLI](https://docs.platform.sh/gettingstarted/cli.html) and access the `controller_microservice` app with the command:
+You can also install the [Platform.sh CLI](https://docs.platform.sh/gettingstarted/cli.html) and access the `controller_microservice` app with the command:
 
   ``` bash
   platform ssh --environment master --app controller_microservice
   ```
 
  The CLI allows you to quickly access different apps deployed in different development environments within a project without having to know the exact URL every time.
+
+ > NOTE: The rest of this workshop will use the CLI for example commands.
 
 ### Explore routes
 
@@ -222,11 +224,84 @@ platform ssh --environment master --app pygments_microservice
 tail -f /var/log/app.log
 ```
 
-or
+When you make a change to the code block in the running web app, you will see the `pygments_microservice` add to its `app.log`.
+
+## Add your own microservice app!
+
+Now that you understand the project in its current form and have an idea of how everything works, you can add your own service to the project. As a starting point, you can copy one of the app directories that already exists in the project, or you can copy one of our [many templates from GitHub](https://github.com/platformsh?utf8=%E2%9C%93&q=template-).
+
+### Creating a basic service
+
+Begin by checking out a new local branch for you app, substituting `YOUR-NEW-APP` for the name of your choice:
 
 ``` bash
-ssh PROJECTID-master-7rqtwti--pygments_microservice@ssh.us-2.platform.sh
-tail -f /var/log/app.log
+git checkout -b YOUR-NEW-APP
 ```
 
-When you make a change to the code block in the running web app, you will see the `pygments_microservice` add to its `app.log`.
+The first step here is building a basic app that accepts a `POST` request such as the following and responds with text or HTML:
+
+``` bash
+curl \
+  -d "text=input_data_here&other_param=something_else" \
+  -X POST https://YOUR-NEW-APP.master-PROJECTID-3iv7isefyglma.us-2.platformsh.site/
+```
+
+After you write the code for your new app, you'll need to configure the application in two places:
+
+- `.platform.app.yaml` - In the [configuration file](https://docs.platform.sh/configuration/app-containers.html) within the app's directory, you need to set a value for the app's `name`.
+- `.platform/routes.yaml` - You'll need to [add a route](https://docs.platform.sh/configuration/routes.html) to the app to make it discoverable by the controller, e.g.
+
+  ``` yaml
+  "https://YOUR-NEW-APP.{default}/":
+    type: upstream
+    upstream: "YOUR-NEW-APP:http"
+  ```
+
+  In the above block, you're pointing the `YOUR-NEW-APP` subdomain to the app with the `name` value `YOUR-NEW-APP`. If you specify an `https` URL, any traffic to its `http` equivalent will be automatically redirected.
+
+Now you can commit your changes and push them:
+
+``` bash
+platform push
+```
+
+Because you've checked out a new branch for your new app, the Platform.sh CLI will ask if you want to activate your new development environment after pushing. Confirm that you do, then confirm that your parent environment is `master`.
+
+As you can see from your terminal output, your new code is being pushed to your Platform.sh project, and the new application is being built. Your new development environment is a fully-functional copy of your production (master) environment, but with the new features of your branch included.
+
+### Debugging your new service
+
+Now that your app has been deployed, you need to debug. Test it by sending a `POST` request with cURL and seeing if you receive the output you expect. Note that you will need to visit the "Access site" information box on the web interface to retrieve the URL for your new app on a new environment; that is, a new base URL is created for each development environment and will differ from those used in the master environment.
+
+If not, you can access the app via SSH to debug it:
+
+``` bash
+platform ssh --environment YOUR-NEW-APP --app YOUR-NEW-APP
+```
+
+where the `--environment` flag specifies your branch/environment name, and the `--app` flag specifies which app container you would like to access.
+
+### Integrating your app
+
+Now that you app has been deployed and debugged, you can integrate it with the project's `controller_microservice` app. You will need to look at the [`gomarkdown` docs](https://godoc.org/github.com/gomarkdown/markdown/ast) to figure out which element you want your new microservice to act on.
+
+You will then need to configure a `/discover` response. Look at how this is configured in the other microservices. Your new `/discover` endpoint will need to return configuration information as [explained in the introduction](#inter-service-communication), for example:
+
+```json
+{
+  "name": "pygments",
+  "type": "*ast.CodeBlock",
+  "attrs": {
+    "language": "Info"
+  },
+  "flags": {
+    "composable": false
+  },
+}
+```
+
+As you make your changes, periodically commit and deploy your code to your new branch and debug any issues that arise. When you are satisfied with your new app, you can merge your branch into master and redeploy your production environment!
+
+### Going further
+
+Have some extra time? You could try to expand your project by adding a cache. [Redis works nicely](https://docs.platform.sh/configuration/services/redis.html) on Platform.sh and can be integrated into your project with relative ease.
