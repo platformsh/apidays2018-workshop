@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Code Editor</title>
+        <meta charset="UTF-8"> 
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/codemirror/CodeMirror/lib/codemirror.css">
         <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/codemirror@5.42.0/lib/codemirror.js"></script>
@@ -12,8 +13,8 @@
     <body style="background-color:#f1f1f1;padding:12px">
         <h1 style="font-family: 'PT Mono', monospace;padding:8px"> Microservice Markdown Magic</h1>
         <div style="width:100%">
-        <div style="width:48%;padding:8px;float:left;clear:none; ">
-            <textarea style="height:100%" id="editor" onChange="submit_html();">
+          <div style="width:48%;padding:8px;float:left;clear:none; ">
+          <textarea style="height:100%" id="editor">
 # h1 Heading i -
 ## h2 Heading ii -
 ### h3 Heading iii -
@@ -25,9 +26,22 @@ var foo = function (bar) {
 
 console.log(foo(5));
 ```
-# Automated Redaction -
+
+``` php
+<?php
+
+$var = "x";
+
+function foo($bar) {
+  array("x", "y");
+  return $bar++;
+}
+```
+## Automated Redaction -
 
 My name is Ludovico Altana and I approve this message</textarea>
+
+        <button id="submit-button" type="submit" name="render-button" onChange="submit_html();">Render</button>
         </div>
         <div style="width:48%;padding:8px;float:right;vertical-align:top;height:6OOpx">
             <iframe  style="border:none;width:100%;height:6OOpx; background-color:white; min-height:600px" id="result"></iframe>
@@ -40,16 +54,21 @@ My name is Ludovico Altana and I approve this message</textarea>
             mode: "markdown"
         });
 
-        editor.on('change', function(cMirror) {
-            // get value right from instance
-            cMirror.save();
+        var button = $("#submit-button");
+        
+        button.on('click', function(button) {
             var code = document.getElementById("editor").value;
             $.post("https://controller." + window.location.hostname, {
                     text: code
                 })
                 .done(function(result) {
                     document.getElementById('result').contentWindow.document.body.innerHTML=result;
-                });
+                }); 
+        })
+
+        editor.on('change', function(cMirror) {
+            // get value right from instance
+            cMirror.save();
         })
     </script>
 </html>
